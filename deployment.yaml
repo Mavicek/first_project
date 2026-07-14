@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-app
+  template:
+    metadata:
+      labels:
+        app: spring-app
+    spec:
+      containers:
+      - name: spring-app
+        image: local/spring-app:latest
+        imagePullPolicy: Never # Důležité: Docker Desktop použije lokální obraz z vašeho PC
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-app-service
+spec:
+  type: LoadBalancer # Docker Desktop automaticky propojí port s localhostem vašeho PC
+  selector:
+    app: spring-app
+  ports:
+    - protocol: TCP
+      port: 8080       # Na tomto portu budete aplikaci volat v prohlížeči (localhost:8080)
+      targetPort: 8080 # Port, na kterém běží Spring Boot uvnitř kontejneru
